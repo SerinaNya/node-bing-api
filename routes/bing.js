@@ -12,7 +12,7 @@ var LOCALCACHE = {
 };
 
 // FUNCTIONS
-function updateCache(day, params, callback) {
+function updateCache(day, params, res) {
   axios({
     url: conf.apiUrl,
     method: 'GET',
@@ -21,10 +21,10 @@ function updateCache(day, params, callback) {
     .then(response => {
       let imgInfo = response.data['images'][0];
       LOCALCACHE[day] = imgInfo;
-      callback();
+      sendRes(day, res);
     })
     .catch(error => {
-      return console.error(`Can not fetch ${conf.apiUrl}!`);
+      return console.error(error);
     })
 };
 function sendRes(day, res) {
@@ -40,10 +40,7 @@ router.get('/daily', (req, res, next) => {
     checkTime.isOutDated(LOCALCACHE[dayName]['fullstartdate'],
       LOCALCACHE[dayName]['enddate'])) {  // 1. 无缓存  2. 过期
     // 更新缓存
-    updateCache(dayName, conf.params[dayName],
-      () => {
-        sendRes(dayName, res);
-      });
+    updateCache(dayName, conf.params[dayName], res);
   } else {
     // 直接返回
     sendRes(dayName, res);
