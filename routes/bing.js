@@ -29,6 +29,7 @@ function updateCache(day, params, res) {
 };
 function sendRes(day, res) {
   res.status(302);
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Location', `${conf.baseUrl}${LOCALCACHE[day]['url']}`);
   res.send();
 };
